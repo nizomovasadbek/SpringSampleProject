@@ -1,6 +1,5 @@
 package net.jetsh.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,34 +15,29 @@ import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 @ComponentScan("net.jetsh")
 @EnableWebMvc
 public class SpringConfig implements WebMvcConfigurer {
-    private final ApplicationContext applicationContext;
-
-    @Autowired
-    public SpringConfig(ApplicationContext applicationContext){
-        this.applicationContext = applicationContext;
-    }
+    private ApplicationContext applicationContext;
 
     @Bean
     public SpringResourceTemplateResolver templateResolver(){
-        SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
-        templateResolver.setApplicationContext(applicationContext);
-        templateResolver.setPrefix("/WEB-INF/views/");
-        templateResolver.setSuffix(".html");
-        return templateResolver;
+        SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
+        resolver.setApplicationContext(applicationContext);
+        resolver.setPrefix("/WEB-INF/views/");
+        resolver.setSuffix(".html");
+        return resolver;
     }
 
     @Bean
-    public SpringTemplateEngine templateEngine(){
+    public SpringTemplateEngine engine(){
         SpringTemplateEngine engine = new SpringTemplateEngine();
-        engine.setTemplateResolver(templateResolver());
         engine.setEnableSpringELCompiler(true);
+        engine.setTemplateResolver(templateResolver());
         return engine;
     }
 
     @Override
-    public void configureViewResolvers(ViewResolverRegistry registry){
-        ThymeleafViewResolver resolver = new ThymeleafViewResolver();
-        resolver.setTemplateEngine(templateEngine());
-        registry.viewResolver(resolver);
+    public void configureViewResolvers(ViewResolverRegistry registry) {
+        ThymeleafViewResolver view = new ThymeleafViewResolver();
+        view.setTemplateEngine(engine());
+        registry.viewResolver(view);
     }
 }
