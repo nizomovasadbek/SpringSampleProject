@@ -9,7 +9,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class MyWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
+        http.authorizeRequests()
+                .antMatchers("/user").hasRole("USER")
+                .antMatchers("/").permitAll()
+                .and()
+                .formLogin()
+                .loginPage("/mypage");
     }
 
     @Override
